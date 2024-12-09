@@ -53,22 +53,25 @@ const ImageWithCustomMarkers = () => {
 
   useEffect(() => {
     if (!mapRef.current) return;
-
+  
     // Update or create markers
     items.forEach((item) => {
       if (markerMap.current[item.id]) {
         markerMap.current[item.id].setLatLng(item.coords);
       } else {
         const marker = createMarker(item.coords, `ID: ${item.id}`);
-        marker.addTo(mapRef.current);
+        if (mapRef.current) {
+          marker.addTo(mapRef.current); // This ensures mapRef.current is not null
+        }
         markerMap.current[item.id] = marker;
       }
     });
   }, [items]);
+  
 
   useEffect(() => {
     const streamInterval = setInterval(() => {
-      const updatedItems: Item[] = Array.from({ length: 20 }, (_, index) => ({
+      const updatedItems: Item[] = Array.from({ length: 10 }, (_, index) => ({
         id: (index + 1).toString(),
         coords: [
           Math.floor(Math.random() * 200), // Random x-coordinate within bounds
