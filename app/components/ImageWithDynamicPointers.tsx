@@ -1,11 +1,12 @@
 "use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 interface Item {
   id: string;
-  coords: [number, number]; // Coordinates on the 200x200 grid
+  coords: [number, number];
 }
 
 const ImageWithCustomMarkers = () => {
@@ -19,6 +20,8 @@ const ImageWithCustomMarkers = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (typeof window === "undefined") return; 
+
     if (!mapContainerRef.current || mapRef.current) return;
 
     // Initialize Leaflet map
@@ -49,25 +52,7 @@ const ImageWithCustomMarkers = () => {
       mapRef.current = null;
       markerMap.current = {};
     };
-  }, []);
-
-  useEffect(() => {
-    if (!mapRef.current) return;
-  
-    // Update or create markers
-    items.forEach((item) => {
-      if (markerMap.current[item.id]) {
-        markerMap.current[item.id].setLatLng(item.coords);
-      } else {
-        const marker = createMarker(item.coords, `ID: ${item.id}`);
-        if (mapRef.current) {
-          marker.addTo(mapRef.current); // This ensures mapRef.current is not null
-        }
-        markerMap.current[item.id] = marker;
-      }
-    });
   }, [items]);
-  
 
   useEffect(() => {
     const streamInterval = setInterval(() => {
